@@ -1,0 +1,39 @@
+
+newmtl Fronds_2
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  150.0
+illum 2
+map_Kd Tree_001_no_leaves_Atlas.tga
+map_Bump Tree_001_no_leaves_Atlas_Normal.tga
+
+
+
+
+newmtl Branches_1
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  150.0
+illum 2
+map_Kd BroadleafBark.tga
+map_Bump BroadleafBark_Normal.tga
+
+
+
+
+newmtl Branches_0
+Ka  0.6 0.6 0.6
+Kd  0.6 0.6 0.6
+Ks  0.1 0.1 0.1
+d  1.0
+Ns  150.0
+illum 2
+map_Kd BroadleafBark.tga
+map_Bump BroadleafBark_Normal.tga
+
+
+
