@@ -2,152 +2,62 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour
 {
+    [Header("References")]
+    public CharacterController controller;
+    public Animator animator;
+
     [Header("Movement")]
-    public float moveSpeed = 5f;
-    public float mouseSensitivity = 150f;
+    public float walkSpeed = 2f;
+    public float runSpeed = 8f;
 
-    [Header("Camera")]
-    public Transform cam;
+    [Header("Gravity")]
+    public float gravity = -20f;
 
-    [Header("Jump")]
-    public float jumpForce = 6f;
-
-    [Header("Ground Check")]
-    public Transform groundCheck;
-    public float groundCheckRadius = 0.2f;
-    public LayerMask groundLayer;
-
-    private Rigidbody rb;
-
-    private float xRotation;
-
-    private float moveX;
-    private float moveZ;
-
-    private bool isGrounded;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-
-        rb.freezeRotation = true;
-
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
+    private Vector3 velocity;
 
     void Update()
     {
-        // ==========================
-        // MOVEMENT INPUT
-        // ==========================
-
-        moveX = Input.GetAxisRaw("Horizontal");
-        moveZ = Input.GetAxisRaw("Vertical");
-
-
-        // ==========================
-        // MOUSE LOOK
-        // ==========================
-
-        float mouseX =
-            Input.GetAxis("Mouse X")
-            * mouseSensitivity
-            * Time.deltaTime;
-
-        float mouseY =
-            Input.GetAxis("Mouse Y")
-            * mouseSensitivity
-            * Time.deltaTime;
-
-        xRotation -= mouseY;
-
-        xRotation = Mathf.Clamp(
-            xRotation,
-            -80f,
-            80f
-        );
-
-        cam.localRotation =
-            Quaternion.Euler(
-                xRotation,
-                0f,
-                0f
-            );
-
-        transform.Rotate(
-            Vector3.up * mouseX
-        );
-
-
-        // ==========================
-        // JUMP
-        // ==========================
-
-        if (
-            Input.GetKeyDown(KeyCode.Space)
-            &&
-            isGrounded
-        )
-        {
-            rb.AddForce(
-                Vector3.up * jumpForce,
-                ForceMode.Impulse
-            );
-        }
+        Move();
+        ApplyGravity();
     }
 
-    void FixedUpdate()
+    void Move()
     {
-        // ==========================
-        // MOVEMENT
-        // ==========================
+        float x = Input.GetAxis("Horizontal");
+        float z = Input.GetAxis("Vertical");
 
-        Vector3 move =
-            (
-                transform.right * moveX
-                +
-                transform.forward * moveZ
-            ).normalized * moveSpeed;
+        Vector3 move = transform.right * x + transform.forward * z;
 
-        rb.linearVelocity =
-            new Vector3(
-                move.x,
-                rb.linearVelocity.y,
-                move.z
-            );
+        float speed = Input.GetKey(KeyCode.LeftShift)
+            ? runSpeed
+            : walkSpeed;
 
+        controller.Move(move * speed * Time.deltaTime);
 
-        // ==========================
-        // GROUND CHECK
-        // ==========================
+        // Animation
+        float animationSpeed = move.magnitude;
 
-        GroundCheck();
-    }
-
-    void GroundCheck()
-    {
-        if (groundCheck != null)
+        if (Input.GetKey(KeyCode.LeftShift) && animationSpeed > 0)
         {
-            isGrounded = Physics.CheckSphere(
-                groundCheck.position,
-                groundCheckRadius
-            );
+            animationSpeed = 1f;
         }
         else
         {
-            isGrounded = false;
+            animationSpeed *= 0.5f;
         }
+
+        animator.SetFloat("Speed", animationSpeed);
     }
 
-    void OnDrawGizmosSelected()
+    void ApplyGravity()
     {
-        if (groundCheck == null)
-            return;
+        if (controller.isGrounded && velocity.y < 0)
+        {
+            velocity.y = -2f;
+        }
 
-        Gizmos.DrawWireSphere(
-            groundCheck.position,
-            groundCheckRadius
-        );
+        velocity.y += gravity * Time.deltaTime;
+
+        controller.Move(velocity * Time.deltaTime);
     }
 }
