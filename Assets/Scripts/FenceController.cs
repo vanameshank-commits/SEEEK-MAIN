@@ -16,6 +16,11 @@ public class FenceController : MonoBehaviour
     // OPEN FROM POINT A
     // =========================================================
 
+
+
+
+
+    
     public void OpenFromPointA()
     {
         if (isMoving)

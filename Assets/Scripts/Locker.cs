@@ -6,7 +6,11 @@ public class Locker : MonoBehaviour
     [Header("References")]
     public GameObject keypadPanel;
     public Animator lockerAnimator;
-    public GameObject objectInside;
+
+    // TWO OBJECTS INSIDE LOCKER
+    public GameObject objectInside1;
+    public GameObject objectInside2;
+
     public AudioSource openSound;
 
     [Header("Player Control")]
@@ -29,8 +33,11 @@ public class Locker : MonoBehaviour
         if (keypadPanel != null)
             keypadPanel.SetActive(false);
 
-        if (objectInside != null)
-            objectInside.SetActive(false);
+        if (objectInside1 != null)
+            objectInside1.SetActive(false);
+
+        if (objectInside2 != null)
+            objectInside2.SetActive(false);
 
         if (codeDisplay != null)
             codeDisplay.text = "";
@@ -184,8 +191,8 @@ public class Locker : MonoBehaviour
         if (lockerAnimator != null)
             lockerAnimator.SetTrigger("Open");
 
-        // Show object after animation
-        Invoke(nameof(ShowObject), 4f);
+        // Show BOTH objects after animation
+        Invoke(nameof(ShowObjects), 4f);
 
         Debug.Log("Correct code! Locker opened.");
     }
@@ -230,14 +237,17 @@ public class Locker : MonoBehaviour
 
 
     // =========================================================
-    // SHOW OBJECT
+    // SHOW BOTH OBJECTS
     // =========================================================
 
-    void ShowObject()
+    void ShowObjects()
     {
-        if (objectInside != null)
-            objectInside.SetActive(true);
+        if (objectInside1 != null)
+            objectInside1.SetActive(true);
 
-        Debug.Log("Object inside locker is available.");
+        if (objectInside2 != null)
+            objectInside2.SetActive(true);
+
+        Debug.Log("Both objects inside locker are available.");
     }
 }

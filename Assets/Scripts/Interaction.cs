@@ -24,12 +24,13 @@ public class Interaction : MonoBehaviour
 
     private GameObject heldItem;
 
-    // Save original world scale
     private Vector3 originalWorldScale;
 
 
     void Update()
     {
+        SyncHeldItem();
+
         UpdatePickupUI();
         UpdateLockerUI();
 
@@ -46,7 +47,28 @@ public class Interaction : MonoBehaviour
 
 
     // =========================================================
-    // HIDE PICKUP E IMAGES
+    // SYNC HELD ITEM
+    // =========================================================
+
+    void SyncHeldItem()
+    {
+        if (heldItem == null)
+            return;
+
+        if (heldItem.transform.parent != objectHoldPoint)
+        {
+            heldItem = null;
+
+            if (ch01Body != null)
+                ch01Body.SetActive(true);
+
+            Debug.Log("Held item released.");
+        }
+    }
+
+
+    // =========================================================
+    // HIDE ALL PICKUP E IMAGES
     // =========================================================
 
     void HideAllPickupEImages()
@@ -81,34 +103,65 @@ public class Interaction : MonoBehaviour
             playerCamera.transform.forward
         );
 
-        if (Physics.Raycast(
+        if (!Physics.Raycast(
             ray,
             out RaycastHit hit,
             interactDistance))
         {
-            if (!hit.collider.CompareTag("PickupObject"))
-                return;
+            return;
+        }
 
-            if (hit.collider.gameObject.name == "Cube")
-            {
-                if (pickupEImage1 != null)
-                    pickupEImage1.SetActive(true);
-            }
-            else if (hit.collider.gameObject.name == "Cube (1)")
-            {
-                if (pickupEImage2 != null)
-                    pickupEImage2.SetActive(true);
-            }
-            else if (hit.collider.gameObject.name == "Cube (2)")
-            {
-                if (pickupEImage3 != null)
-                    pickupEImage3.SetActive(true);
-            }
-            else if (hit.collider.gameObject.name == "Cube (3)")
-            {
-                if (pickupEImage4 != null)
-                    pickupEImage4.SetActive(true);
-            }
+        if (!hit.collider.CompareTag("PickupObject"))
+            return;
+
+        string objectName =
+            hit.collider.gameObject.name;
+
+
+        // =====================================================
+        // CUBE 1
+        // =====================================================
+
+        if (objectName == "Cube")
+        {
+            if (pickupEImage1 != null)
+                pickupEImage1.SetActive(true);
+        }
+
+
+        // =====================================================
+        // CUBE 2
+        // =====================================================
+
+        else if (objectName == "Cube (1)" ||
+                 objectName == "Cube 1")
+        {
+            if (pickupEImage2 != null)
+                pickupEImage2.SetActive(true);
+        }
+
+
+        // =====================================================
+        // CUBE 3
+        // =====================================================
+
+        else if (objectName == "Cube (2)" ||
+                 objectName == "Cube 2")
+        {
+            if (pickupEImage3 != null)
+                pickupEImage3.SetActive(true);
+        }
+
+
+        // =====================================================
+        // CUBE 4
+        // =====================================================
+
+        else if (objectName == "Cube (3)" ||
+                 objectName == "Cube 3")
+        {
+            if (pickupEImage4 != null)
+                pickupEImage4.SetActive(true);
         }
     }
 
@@ -146,7 +199,7 @@ public class Interaction : MonoBehaviour
 
 
     // =========================================================
-    // INTERACTION
+    // PICKUP
     // =========================================================
 
     void TryPickup()
@@ -198,7 +251,7 @@ public class Interaction : MonoBehaviour
         heldItem = hit.collider.gameObject;
 
 
-        // Save original world scale BEFORE parenting
+        // Save original world scale
         originalWorldScale =
             heldItem.transform.lossyScale;
 
@@ -250,7 +303,7 @@ public class Interaction : MonoBehaviour
             );
 
 
-        // Hide body while holding
+        // Hide body
         if (ch01Body != null)
             ch01Body.SetActive(false);
 
@@ -273,19 +326,14 @@ public class Interaction : MonoBehaviour
         if (heldItem == null)
             return;
 
-
-        // Remove from hand
         heldItem.transform.SetParent(null);
 
-
-        // Drop in front of player
         heldItem.transform.position =
             playerCamera.transform.position +
             playerCamera.transform.forward *
             dropDistance;
 
 
-        // Enable collider
         Collider col =
             heldItem.GetComponent<Collider>();
 
@@ -293,7 +341,6 @@ public class Interaction : MonoBehaviour
             col.enabled = true;
 
 
-        // Enable physics
         Rigidbody rb =
             heldItem.GetComponent<Rigidbody>();
 
@@ -304,15 +351,11 @@ public class Interaction : MonoBehaviour
         }
 
 
-        // Enable body
         if (ch01Body != null)
             ch01Body.SetActive(true);
 
-
         heldItem = null;
 
-        Debug.Log(
-            "Dropped item."
-        );
+        Debug.Log("Dropped item.");
     }
 }

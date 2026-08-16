@@ -1,0 +1,2 @@
+using UnityEngine;
+public class MannequinStartTrigger : MonoBehaviour { public MannequinAI mannequin; private void OnTriggerEnter(Collider other) { if (!other.CompareTag("Player")) return; if (mannequin != null) { mannequin.StartChasing(); } Debug.Log("Mannequin chase activated!"); } }
