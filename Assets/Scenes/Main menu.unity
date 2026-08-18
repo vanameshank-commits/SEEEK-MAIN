@@ -394,8 +394,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6a9ac0a814b8a4a47aa134bd04e077f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MainMenuManager
+  introSceneName: IntroScene
+  mainMenuSceneName: Main menu
+  controlPanelSceneName: ControlPanel
   gameSceneName: SEEK-MAIN
-  creditsPanel: {fileID: 0}
+  introTime: 3
+  controlPanelTime: 3
 --- !u!4 &711380241
 Transform:
   m_ObjectHideFlags: 0
@@ -423,6 +427,7 @@ GameObject:
   - component: {fileID: 730162142}
   - component: {fileID: 730162141}
   - component: {fileID: 730162140}
+  - component: {fileID: 730162143}
   m_Layer: 5
   m_Name: Button
   m_TagString: Untagged
@@ -494,9 +499,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 711380240}
-        m_TargetAssemblyTypeName: MainMenuManager, Assembly-CSharp
-        m_MethodName: PlayGame
+      - m_Target: {fileID: 730162143}
+        m_TargetAssemblyTypeName: PlayButton, Assembly-CSharp
+        m_MethodName: Play
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -544,6 +549,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 730162138}
   m_CullTransparentMesh: 1
+--- !u!114 &730162143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 730162138}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cfeb9fa7ff13b0c49b3ad27587a5c4ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayButton
 --- !u!1 &1176272919
 GameObject:
   m_ObjectHideFlags: 0
