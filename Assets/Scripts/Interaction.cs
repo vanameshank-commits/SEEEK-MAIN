@@ -22,10 +22,55 @@ public class Interaction : MonoBehaviour
     [Header("Locker UI")]
     public GameObject lockerEImage;
 
+    // =========================================================
+    // INVENTORY
+    // =========================================================
+
+    [Header("Inventory Images")]
+    public GameObject zItemImage;
+    public GameObject xItemImage;
+    public GameObject cItemImage;
+    public GameObject vItemImage;
+
+    [Header("Inventory Objects")]
+    public GameObject cube;
+    public GameObject cube1;
+    public GameObject cube2;
+    public GameObject cube3;
+
+    private bool cubeCollected = false;
+    private bool cube1Collected = false;
+    private bool cube2Collected = false;
+    private bool cube3Collected = false;
+
     private GameObject heldItem;
 
     private Vector3 originalWorldScale;
 
+
+    // =========================================================
+    // START
+    // =========================================================
+
+    void Start()
+    {
+        if (zItemImage != null)
+            zItemImage.SetActive(false);
+
+        if (xItemImage != null)
+            xItemImage.SetActive(false);
+
+        if (cItemImage != null)
+            cItemImage.SetActive(false);
+
+        if (vItemImage != null)
+            vItemImage.SetActive(false);
+    }
+
+
+    // =========================================================
+    // UPDATE
+    // =========================================================
 
     void Update()
     {
@@ -34,11 +79,37 @@ public class Interaction : MonoBehaviour
         UpdatePickupUI();
         UpdateLockerUI();
 
+        // E = Pickup
         if (Input.GetKeyDown(KeyCode.E))
         {
             TryPickup();
         }
 
+        // Z = Cube
+        if (Input.GetKeyDown(KeyCode.Z))
+        {
+            ToggleInventoryItem(0);
+        }
+
+        // X = Cube 1
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            ToggleInventoryItem(1);
+        }
+
+        // C = Cube 2
+        if (Input.GetKeyDown(KeyCode.C))
+        {
+            ToggleInventoryItem(2);
+        }
+
+        // V = Cube 3
+        if (Input.GetKeyDown(KeyCode.V))
+        {
+            ToggleInventoryItem(3);
+        }
+
+        // Q = Drop
         if (Input.GetKeyDown(KeyCode.Q))
         {
             Drop();
@@ -114,25 +185,17 @@ public class Interaction : MonoBehaviour
         if (!hit.collider.CompareTag("PickupObject"))
             return;
 
-        string objectName =
-            hit.collider.gameObject.name;
+        string objectName = hit.collider.gameObject.name;
 
 
-        // =====================================================
-        // CUBE 1
-        // =====================================================
-
+        // CUBE
         if (objectName == "Cube")
         {
             if (pickupEImage1 != null)
                 pickupEImage1.SetActive(true);
         }
 
-
-        // =====================================================
-        // CUBE 2
-        // =====================================================
-
+        // CUBE 1
         else if (objectName == "Cube (1)" ||
                  objectName == "Cube 1")
         {
@@ -140,11 +203,7 @@ public class Interaction : MonoBehaviour
                 pickupEImage2.SetActive(true);
         }
 
-
-        // =====================================================
-        // CUBE 3
-        // =====================================================
-
+        // CUBE 2
         else if (objectName == "Cube (2)" ||
                  objectName == "Cube 2")
         {
@@ -152,11 +211,7 @@ public class Interaction : MonoBehaviour
                 pickupEImage3.SetActive(true);
         }
 
-
-        // =====================================================
-        // CUBE 4
-        // =====================================================
-
+        // CUBE 3
         else if (objectName == "Cube (3)" ||
                  objectName == "Cube 3")
         {
@@ -248,15 +303,203 @@ public class Interaction : MonoBehaviour
         if (!hit.collider.CompareTag("PickupObject"))
             return;
 
-        heldItem = hit.collider.gameObject;
+        GameObject pickedObject =
+            hit.collider.gameObject;
 
 
-        // Save original world scale
+        // =====================================================
+        // CUBE
+        // =====================================================
+
+        if (pickedObject == cube)
+        {
+            if (cubeCollected)
+                return;
+
+            cubeCollected = true;
+
+            if (zItemImage != null)
+                zItemImage.SetActive(true);
+
+            pickedObject.SetActive(false);
+
+            Debug.Log("Cube added to Z inventory.");
+
+            HideAllPickupEImages();
+
+            return;
+        }
+
+
+        // =====================================================
+        // CUBE 1
+        // =====================================================
+
+        if (pickedObject == cube1)
+        {
+            if (cube1Collected)
+                return;
+
+            cube1Collected = true;
+
+            if (xItemImage != null)
+                xItemImage.SetActive(true);
+
+            pickedObject.SetActive(false);
+
+            Debug.Log("Cube 1 added to X inventory.");
+
+            HideAllPickupEImages();
+
+            return;
+        }
+
+
+        // =====================================================
+        // CUBE 2
+        // =====================================================
+
+        if (pickedObject == cube2)
+        {
+            if (cube2Collected)
+                return;
+
+            cube2Collected = true;
+
+            if (cItemImage != null)
+                cItemImage.SetActive(true);
+
+            pickedObject.SetActive(false);
+
+            Debug.Log("Cube 2 added to C inventory.");
+
+            HideAllPickupEImages();
+
+            return;
+        }
+
+
+        // =====================================================
+        // CUBE 3
+        // =====================================================
+
+        if (pickedObject == cube3)
+        {
+            if (cube3Collected)
+                return;
+
+            cube3Collected = true;
+
+            if (vItemImage != null)
+                vItemImage.SetActive(true);
+
+            pickedObject.SetActive(false);
+
+            Debug.Log("Cube 3 added to V inventory.");
+
+            HideAllPickupEImages();
+
+            return;
+        }
+    }
+
+
+    // =========================================================
+    // INVENTORY TOGGLE
+    // =========================================================
+
+    void ToggleInventoryItem(int index)
+    {
+        GameObject item = GetInventoryItem(index);
+
+        if (item == null)
+            return;
+
+        if (!IsCollected(index))
+            return;
+
+
+        // =====================================================
+        // SAME ITEM ALREADY IN HAND
+        // =====================================================
+
+        if (heldItem == item)
+        {
+            ReturnToInventory(index);
+            return;
+        }
+
+
+        // =====================================================
+        // ANOTHER ITEM IS IN HAND
+        // =====================================================
+
+        if (heldItem != null)
+        {
+            Debug.Log("Another item is already in hand.");
+            return;
+        }
+
+
+        // =====================================================
+        // TAKE ITEM FROM INVENTORY
+        // =====================================================
+
+        EquipItem(item);
+    }
+
+
+    // =========================================================
+    // EQUIP ITEM
+    // =========================================================
+
+    void EquipItem(GameObject item)
+    {
+        heldItem = item;
+
+
+        // =====================================================
+        // HIDE INVENTORY IMAGE
+        // =====================================================
+
+        if (item == cube)
+        {
+            if (zItemImage != null)
+                zItemImage.SetActive(false);
+        }
+        else if (item == cube1)
+        {
+            if (xItemImage != null)
+                xItemImage.SetActive(false);
+        }
+        else if (item == cube2)
+        {
+            if (cItemImage != null)
+                cItemImage.SetActive(false);
+        }
+        else if (item == cube3)
+        {
+            if (vItemImage != null)
+                vItemImage.SetActive(false);
+        }
+
+
+        // =====================================================
+        // ACTIVATE OBJECT
+        // =====================================================
+
+        heldItem.SetActive(true);
+
+
+        // Save scale
         originalWorldScale =
             heldItem.transform.lossyScale;
 
 
-        // Disable physics
+        // =====================================================
+        // DISABLE PHYSICS
+        // =====================================================
+
         Rigidbody rb =
             heldItem.GetComponent<Rigidbody>();
 
@@ -270,7 +513,10 @@ public class Interaction : MonoBehaviour
         }
 
 
-        // Disable collider
+        // =====================================================
+        // DISABLE COLLIDER
+        // =====================================================
+
         Collider col =
             heldItem.GetComponent<Collider>();
 
@@ -278,7 +524,10 @@ public class Interaction : MonoBehaviour
             col.enabled = false;
 
 
-        // Move into hand
+        // =====================================================
+        // MOVE TO EXISTING HAND POINT
+        // =====================================================
+
         heldItem.transform.SetParent(
             objectHoldPoint,
             false
@@ -291,7 +540,10 @@ public class Interaction : MonoBehaviour
             Quaternion.identity;
 
 
-        // Keep original world size
+        // =====================================================
+        // KEEP ORIGINAL WORLD SIZE
+        // =====================================================
+
         Vector3 parentScale =
             objectHoldPoint.lossyScale;
 
@@ -303,17 +555,162 @@ public class Interaction : MonoBehaviour
             );
 
 
-        // Hide body
+        // =====================================================
+        // HIDE FIRST PERSON BODY
+        // =====================================================
+
         if (ch01Body != null)
             ch01Body.SetActive(false);
 
 
-        HideAllPickupEImages();
+        Debug.Log(
+            "Equipped: " +
+            heldItem.name +
+            " | Inventory image hidden."
+        );
+    }
+
+
+    // =========================================================
+    // RETURN ITEM TO INVENTORY
+    // =========================================================
+
+    void ReturnToInventory(int index)
+    {
+        if (heldItem == null)
+            return;
+
+        GameObject item = heldItem;
+
+
+        // =====================================================
+        // REMOVE FROM HAND
+        // =====================================================
+
+        item.transform.SetParent(null);
+
+
+        // =====================================================
+        // HIDE OBJECT
+        // =====================================================
+
+        item.SetActive(false);
+
+
+        // =====================================================
+        // KEEP PHYSICS DISABLED
+        // =====================================================
+
+        Rigidbody rb =
+            item.GetComponent<Rigidbody>();
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+
+            rb.isKinematic = true;
+            rb.useGravity = false;
+        }
+
+
+        // =====================================================
+        // KEEP COLLIDER DISABLED
+        // =====================================================
+
+        Collider col =
+            item.GetComponent<Collider>();
+
+        if (col != null)
+            col.enabled = false;
+
+
+        heldItem = null;
+
+
+        // =====================================================
+        // SHOW INVENTORY IMAGE AGAIN
+        // =====================================================
+
+        if (item == cube)
+        {
+            if (zItemImage != null)
+                zItemImage.SetActive(true);
+        }
+        else if (item == cube1)
+        {
+            if (xItemImage != null)
+                xItemImage.SetActive(true);
+        }
+        else if (item == cube2)
+        {
+            if (cItemImage != null)
+                cItemImage.SetActive(true);
+        }
+        else if (item == cube3)
+        {
+            if (vItemImage != null)
+                vItemImage.SetActive(true);
+        }
+
+
+        // =====================================================
+        // SHOW FIRST PERSON BODY
+        // =====================================================
+
+        if (ch01Body != null)
+            ch01Body.SetActive(true);
+
 
         Debug.Log(
-            "Picked up: " +
-            heldItem.name
+            "Returned to inventory: " +
+            item.name +
+            " | Inventory image visible."
         );
+    }
+
+
+    // =========================================================
+    // GET INVENTORY ITEM
+    // =========================================================
+
+    GameObject GetInventoryItem(int index)
+    {
+        if (index == 0)
+            return cube;
+
+        if (index == 1)
+            return cube1;
+
+        if (index == 2)
+            return cube2;
+
+        if (index == 3)
+            return cube3;
+
+        return null;
+    }
+
+
+    // =========================================================
+    // CHECK COLLECTED
+    // =========================================================
+
+    bool IsCollected(int index)
+    {
+        if (index == 0)
+            return cubeCollected;
+
+        if (index == 1)
+            return cube1Collected;
+
+        if (index == 2)
+            return cube2Collected;
+
+        if (index == 3)
+            return cube3Collected;
+
+        return false;
     }
 
 
@@ -326,23 +723,39 @@ public class Interaction : MonoBehaviour
         if (heldItem == null)
             return;
 
-        heldItem.transform.SetParent(null);
+        GameObject droppedItem =
+            heldItem;
 
-        heldItem.transform.position =
+
+        // =====================================================
+        // REMOVE FROM HAND
+        // =====================================================
+
+        droppedItem.transform.SetParent(null);
+
+        droppedItem.transform.position =
             playerCamera.transform.position +
             playerCamera.transform.forward *
             dropDistance;
 
 
+        // =====================================================
+        // ENABLE COLLIDER
+        // =====================================================
+
         Collider col =
-            heldItem.GetComponent<Collider>();
+            droppedItem.GetComponent<Collider>();
 
         if (col != null)
             col.enabled = true;
 
 
+        // =====================================================
+        // ENABLE PHYSICS
+        // =====================================================
+
         Rigidbody rb =
-            heldItem.GetComponent<Rigidbody>();
+            droppedItem.GetComponent<Rigidbody>();
 
         if (rb != null)
         {
@@ -351,11 +764,63 @@ public class Interaction : MonoBehaviour
         }
 
 
+        // =====================================================
+        // REMOVE FROM INVENTORY
+        // =====================================================
+
+        RemoveFromInventory(droppedItem);
+
+
+        // =====================================================
+        // SHOW BODY
+        // =====================================================
+
         if (ch01Body != null)
             ch01Body.SetActive(true);
+
 
         heldItem = null;
 
         Debug.Log("Dropped item.");
+    }
+
+
+    // =========================================================
+    // REMOVE FROM INVENTORY
+    // =========================================================
+
+    void RemoveFromInventory(GameObject item)
+    {
+        if (item == cube)
+        {
+            cubeCollected = false;
+
+            if (zItemImage != null)
+                zItemImage.SetActive(false);
+        }
+
+        else if (item == cube1)
+        {
+            cube1Collected = false;
+
+            if (xItemImage != null)
+                xItemImage.SetActive(false);
+        }
+
+        else if (item == cube2)
+        {
+            cube2Collected = false;
+
+            if (cItemImage != null)
+                cItemImage.SetActive(false);
+        }
+
+        else if (item == cube3)
+        {
+            cube3Collected = false;
+
+            if (vItemImage != null)
+                vItemImage.SetActive(false);
+        }
     }
 }
