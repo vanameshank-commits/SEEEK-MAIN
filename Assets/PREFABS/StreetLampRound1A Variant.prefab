@@ -17,8 +17,16 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1292052511759292375, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
+      propertyPath: m_Range
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 1292052511759292375, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_Intensity
-      value: 10
+      value: 45
+      objectReference: {fileID: 0}
+    - target: {fileID: 1292052511759292375, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1292052511759292375, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_BounceIntensity
@@ -42,15 +50,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 893.77
+      value: -18.35
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.21
+      value: -0.70002
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 553.56
+      value: 13.22
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalRotation.w
@@ -58,7 +66,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0
+      value: -0
       objectReference: {fileID: 0}
     - target: {fileID: 1649414014555591318, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_LocalRotation.y
@@ -85,8 +93,12 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
+      propertyPath: m_Range
+      value: 30
+      objectReference: {fileID: 0}
+    - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_Intensity
-      value: 10
+      value: 366
       objectReference: {fileID: 0}
     - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_SpotAngle
@@ -95,6 +107,10 @@ PrefabInstance:
     - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_InnerSpotAngle
       value: 38.130157
+      objectReference: {fileID: 0}
+    - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
+      propertyPath: m_Shadows.m_Type
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 7873616838543968281, guid: 1b01ec087414cf046926d21f8c0c7f6f, type: 3}
       propertyPath: m_UseColorTemperature

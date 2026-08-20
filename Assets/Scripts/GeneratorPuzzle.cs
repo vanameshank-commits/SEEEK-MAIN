@@ -108,15 +108,34 @@ public class GeneratorPuzzle : MonoBehaviour
             music.Stop();
         }
 
-        // Slider
+        // =====================================================
+        // SLIDER
+        // =====================================================
+
         if (progressSlider != null)
         {
             progressSlider.minValue = 0;
             progressSlider.maxValue = buttons.Length;
             progressSlider.value = 0;
+
+            // Make slider fill WHITE
+            if (progressSlider.fillRect != null)
+            {
+                Image fillImage =
+                    progressSlider.fillRect.GetComponent<Image>();
+
+                if (fillImage != null)
+                {
+                    fillImage.color = Color.white;
+                }
+            }
         }
 
-        // Button setup
+
+        // =====================================================
+        // BUTTON SETUP
+        // =====================================================
+
         for (int i = 0; i < buttons.Length; i++)
         {
             int buttonIndex = i;
