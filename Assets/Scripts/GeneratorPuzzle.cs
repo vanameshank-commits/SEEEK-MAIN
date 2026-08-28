@@ -3,75 +3,45 @@ using UnityEngine.UI;
 
 public class GeneratorPuzzle : MonoBehaviour
 {
-    // =========================================================
-    // UI
-    // =========================================================
-
     [Header("UI")]
     public GameObject generatorPanel;
     public Slider progressSlider;
-
-    // Image that says "E"
     public GameObject interactImage;
-
-
-    // =========================================================
-    // BUTTONS
-    // =========================================================
 
     [Header("Buttons")]
     public Button[] buttons;
 
+    [Header("Correct Sequence")]
+    public int[] correctSequence = { 1, 2, 3, 4, 5 };
 
-    // =========================================================
-    // GENERATOR
-    // =========================================================
+    [Header("Colors")]
+    public Color normalColor = Color.white;
+    public Color correctColor = Color.green;
+    public Color wrongColor = Color.red;
 
     [Header("Generator")]
     public GameObject generatorObject;
 
-
-    // =========================================================
-    // REWARD
-    // =========================================================
-
     [Header("Reward")]
     public GameObject cube3;
-
-
-    // =========================================================
-    // LIGHTS
-    // =========================================================
 
     [Header("Lights After Generator")]
     public GameObject[] lightsToTurnOn;
 
-
-    // =========================================================
-    // MUSIC
-    // =========================================================
-
     [Header("Music After Generator")]
     public AudioSource music;
-
-
-    // =========================================================
-    // INTERACTION
-    // =========================================================
 
     [Header("Interaction")]
     public Camera playerCamera;
     public float interactDistance = 3f;
 
-
-    // =========================================================
-    // VARIABLES
-    // =========================================================
+    [Header("Camera Look")]
+    public MonoBehaviour cameraLook;
 
     private bool panelOpen = false;
     private bool solved = false;
 
-    private int currentCorrectButton = 0;
+    private int currentStep = 0;
 
 
     // =========================================================
@@ -80,19 +50,15 @@ public class GeneratorPuzzle : MonoBehaviour
 
     void Start()
     {
-        // Hide generator panel
         if (generatorPanel != null)
             generatorPanel.SetActive(false);
 
-        // Hide E image
         if (interactImage != null)
             interactImage.SetActive(false);
 
-        // Hide Cube 3
         if (cube3 != null)
             cube3.SetActive(false);
 
-        // Turn lights OFF initially
         if (lightsToTurnOn != null)
         {
             foreach (GameObject lightObject in lightsToTurnOn)
@@ -102,51 +68,37 @@ public class GeneratorPuzzle : MonoBehaviour
             }
         }
 
-        // Music OFF initially
         if (music != null)
-        {
             music.Stop();
-        }
 
-        // =====================================================
+
         // SLIDER
-        // =====================================================
-
         if (progressSlider != null)
         {
             progressSlider.minValue = 0;
-            progressSlider.maxValue = buttons.Length;
+            progressSlider.maxValue = correctSequence.Length;
             progressSlider.value = 0;
-
-            // Make slider fill WHITE
-            if (progressSlider.fillRect != null)
-            {
-                Image fillImage =
-                    progressSlider.fillRect.GetComponent<Image>();
-
-                if (fillImage != null)
-                {
-                    fillImage.color = Color.white;
-                }
-            }
         }
 
 
-        // =====================================================
-        // BUTTON SETUP
-        // =====================================================
-
+        // BUTTONS
         for (int i = 0; i < buttons.Length; i++)
         {
-            int buttonIndex = i;
+            int buttonNumber = i + 1;
 
             if (buttons[i] != null)
             {
+                buttons[i].onClick.RemoveAllListeners();
+
                 buttons[i].onClick.AddListener(
-                    () => PressButton(buttonIndex)
+                    () => PressButton(buttonNumber)
                 );
+
+                SetButtonColor(buttons[i], normalColor);
             }
         }
+
+        Debug.Log("Generator buttons initialized: " + buttons.Length);
     }
 
 
@@ -159,7 +111,6 @@ public class GeneratorPuzzle : MonoBehaviour
         if (solved)
             return;
 
-        // If panel is open
         if (panelOpen)
         {
             if (Input.GetKeyDown(KeyCode.Q))
@@ -170,7 +121,6 @@ public class GeneratorPuzzle : MonoBehaviour
             return;
         }
 
-        // Check if player is looking at generator
         CheckPlayerLookingAtGenerator();
     }
 
@@ -199,11 +149,9 @@ public class GeneratorPuzzle : MonoBehaviour
 
             if (generator == this)
             {
-                // Show E image
                 if (interactImage != null)
                     interactImage.SetActive(true);
 
-                // Press E
                 if (Input.GetKeyDown(KeyCode.E))
                 {
                     OpenPanel();
@@ -213,7 +161,6 @@ public class GeneratorPuzzle : MonoBehaviour
             }
         }
 
-        // Player is NOT looking at generator
         if (interactImage != null)
             interactImage.SetActive(false);
     }
@@ -230,19 +177,28 @@ public class GeneratorPuzzle : MonoBehaviour
 
         panelOpen = true;
 
-        // Hide E image
         if (interactImage != null)
             interactImage.SetActive(false);
 
-        // Show generator panel
         if (generatorPanel != null)
             generatorPanel.SetActive(true);
 
-        // Cursor
+
+        // =====================================================
+        // STOP ONLY CAMERA LOOK
+        // =====================================================
+
+        if (cameraLook != null)
+        {
+            cameraLook.enabled = false;
+        }
+
+
+        // Unlock mouse for UI
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
 
-        Debug.Log("Generator panel opened.");
+        Debug.Log("Generator panel OPENED - CAMERA LOOK LOCKED");
     }
 
 
@@ -257,158 +213,151 @@ public class GeneratorPuzzle : MonoBehaviour
         if (generatorPanel != null)
             generatorPanel.SetActive(false);
 
+
+        // =====================================================
+        // ENABLE CAMERA LOOK AGAIN
+        // =====================================================
+
+        if (cameraLook != null)
+        {
+            cameraLook.enabled = true;
+        }
+
+
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
-        Debug.Log("Generator panel closed.");
+        Debug.Log("Generator panel CLOSED - CAMERA LOOK ENABLED");
     }
 
 
     // =========================================================
-    // BUTTON
+    // BUTTON PRESSED
     // =========================================================
 
-    void PressButton(int buttonIndex)
+    public void PressButton(int buttonNumber)
     {
-        if (!panelOpen)
-            return;
-
         if (solved)
             return;
 
+        if (currentStep >= correctSequence.Length)
+            return;
 
-        // Correct button
-        if (buttonIndex == currentCorrectButton)
+        Debug.Log("BUTTON PRESSED: " + buttonNumber);
+
+        int correctButton = correctSequence[currentStep];
+
+        if (buttonNumber == correctButton)
         {
-            currentCorrectButton++;
+            Debug.Log("CORRECT!");
 
-            if (progressSlider != null)
-            {
-                progressSlider.value =
-                    currentCorrectButton;
-            }
-
-            Debug.Log(
-                "Correct generator button: " +
-                (buttonIndex + 1)
+            SetButtonColor(
+                buttons[buttonNumber - 1],
+                correctColor
             );
 
+            currentStep++;
 
-            // Completed
-            if (currentCorrectButton >= buttons.Length)
+            if (progressSlider != null)
+                progressSlider.value = currentStep;
+
+            if (currentStep >= correctSequence.Length)
             {
-                CompletePuzzle();
+                SolvePuzzle();
             }
         }
         else
         {
-            Debug.Log("Wrong generator button!");
+            Debug.Log("WRONG BUTTON!");
+
+            SetButtonColor(
+                buttons[buttonNumber - 1],
+                wrongColor
+            );
+
+            CancelInvoke(nameof(ResetPuzzle));
+            Invoke(nameof(ResetPuzzle), 0.5f);
         }
     }
 
 
     // =========================================================
-    // COMPLETE GENERATOR
+    // RESET
     // =========================================================
 
-    void CompletePuzzle()
+    void ResetPuzzle()
+    {
+        currentStep = 0;
+
+        if (progressSlider != null)
+            progressSlider.value = 0;
+
+        for (int i = 0; i < buttons.Length; i++)
+        {
+            if (buttons[i] != null)
+                SetButtonColor(buttons[i], normalColor);
+        }
+
+        Debug.Log("Sequence reset.");
+    }
+
+
+    // =========================================================
+    // SOLVE
+    // =========================================================
+
+    void SolvePuzzle()
     {
         solved = true;
-        panelOpen = false;
 
-
-        // -----------------------------------------------------
-        // CLOSE PANEL
-        // -----------------------------------------------------
-
-        if (generatorPanel != null)
-            generatorPanel.SetActive(false);
-
-
-        // -----------------------------------------------------
-        // HIDE GENERATOR
-        // -----------------------------------------------------
-
-        if (generatorObject != null)
-        {
-            generatorObject.SetActive(false);
-        }
-        else
-        {
-            gameObject.SetActive(false);
-        }
-
-
-        // -----------------------------------------------------
-        // SHOW CUBE 3
-        // -----------------------------------------------------
-
-        if (cube3 != null)
-        {
-            cube3.SetActive(true);
-        }
-
-
-        // -----------------------------------------------------
-        // TURN LIGHTS ON
-        // -----------------------------------------------------
+        Debug.Log("GENERATOR PUZZLE SOLVED!");
 
         if (lightsToTurnOn != null)
         {
             foreach (GameObject lightObject in lightsToTurnOn)
             {
                 if (lightObject != null)
-                {
                     lightObject.SetActive(true);
-                }
             }
         }
 
-
-        // -----------------------------------------------------
-        // START MUSIC
-        // -----------------------------------------------------
-
         if (music != null)
-        {
             music.Play();
+
+        if (cube3 != null)
+            cube3.SetActive(true);
+
+        if (generatorPanel != null)
+            generatorPanel.SetActive(false);
+
+        panelOpen = false;
+
+
+        // Enable camera look again
+        if (cameraLook != null)
+        {
+            cameraLook.enabled = true;
         }
-
-
-        // -----------------------------------------------------
-        // LOCK CURSOR
-        // -----------------------------------------------------
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
 
+        Debug.Log("Generator completed!");
+    }
 
-        Debug.Log(
-            "================================="
-        );
 
-        Debug.Log(
-            "GENERATOR PUZZLE COMPLETE!"
-        );
+    // =========================================================
+    // BUTTON COLOR
+    // =========================================================
 
-        Debug.Log(
-            "GENERATOR DISAPPEARED"
-        );
+    void SetButtonColor(Button button, Color color)
+    {
+        if (button == null)
+            return;
 
-        Debug.Log(
-            "LIGHTS TURNED ON"
-        );
+        Image image = button.GetComponent<Image>();
 
-        Debug.Log(
-            "MUSIC STARTED"
-        );
-
-        Debug.Log(
-            "CUBE 3 IS NOW VISIBLE"
-        );
-
-        Debug.Log(
-            "================================="
-        );
+        if (image != null)
+            image.color = color;
     }
 }

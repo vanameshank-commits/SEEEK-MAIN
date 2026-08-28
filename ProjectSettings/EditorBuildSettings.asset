@@ -15,6 +15,9 @@ EditorBuildSettings:
     path: Assets/Scenes/ControlPanel.unity
     guid: ab1bbe58891500c4990fd0354b868343
   - enabled: 1
+    path: Assets/Scenes/StoryScene.unity
+    guid: 9e8d190d66983d740857bf75ea706ed6
+  - enabled: 1
     path: Assets/Scenes/SEEK-MAIN.unity
     guid: 99c9720ab356a0642a771bea13969a05
   m_configObjects:

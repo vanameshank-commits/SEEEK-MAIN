@@ -5,6 +5,8 @@ public class NoteBook : MonoBehaviour
     [Header("References")]
     public Camera playerCamera;
     public Canvas EImage;
+
+    [Header("This Book's Note")]
     public GameObject NoteImage;
 
     [Header("Settings")]
@@ -45,7 +47,10 @@ public class NoteBook : MonoBehaviour
             out RaycastHit hit,
             interactDistance))
         {
-            if (hit.collider.CompareTag("Book"))
+            // Check whether the ray actually hit THIS notebook
+            NoteBook hitBook = hit.collider.GetComponentInParent<NoteBook>();
+
+            if (hitBook == this)
             {
                 lookingAtBook = true;
             }
@@ -54,7 +59,7 @@ public class NoteBook : MonoBehaviour
         // SHOW / HIDE E IMAGE
         EImage.gameObject.SetActive(lookingAtBook);
 
-        // OPEN NOTE
+        // OPEN ONLY THIS BOOK'S NOTE
         if (lookingAtBook && Input.GetKeyDown(KeyCode.E))
         {
             EImage.gameObject.SetActive(false);

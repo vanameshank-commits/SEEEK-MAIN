@@ -15,6 +15,10 @@ public class MouseLook : MonoBehaviour
 
     void Update()
     {
+        // Stop ONLY camera movement while pause menu is open
+        if (PauseMenu.IsPaused)
+            return;
+
         if (!canLook)
             return;
 

@@ -7,11 +7,13 @@ public class MainMenuManager : MonoBehaviour
     public string introSceneName = "IntroScene";
     public string mainMenuSceneName = "Main menu";
     public string controlPanelSceneName = "ControlPanel";
+    public string storySceneName = "StoryScene";
     public string gameSceneName = "SEEK-MAIN";
 
     [Header("Timing")]
     public float introTime = 3f;
     public float controlPanelTime = 3f;
+    public float storyTime = 8f;
 
     private static MainMenuManager instance;
 
@@ -42,7 +44,7 @@ public class MainMenuManager : MonoBehaviour
 
         Debug.Log("Current Scene: " + currentScene);
 
-        // INTRO
+        // INTRO → MAIN MENU
         if (currentScene == introSceneName)
         {
             Debug.Log("INTRO STARTED - 3 SECOND TIMER");
@@ -51,13 +53,22 @@ public class MainMenuManager : MonoBehaviour
             Invoke(nameof(LoadMainMenu), introTime);
         }
 
-        // CONTROL PANEL
+        // CONTROL PANEL → STORY
         else if (currentScene == controlPanelSceneName)
         {
             Debug.Log("CONTROL PANEL STARTED - 3 SECOND TIMER");
 
             CancelInvoke();
-            Invoke(nameof(LoadGame), controlPanelTime);
+            Invoke(nameof(LoadStoryScene), controlPanelTime);
+        }
+
+        // STORY → GAME
+        else if (currentScene == storySceneName)
+        {
+            Debug.Log("STORY SCENE STARTED - 8 SECOND TIMER");
+
+            CancelInvoke();
+            Invoke(nameof(LoadGame), storyTime);
         }
     }
 
@@ -79,7 +90,11 @@ public class MainMenuManager : MonoBehaviour
         Cursor.visible = true;
     }
 
+
+    // =========================================================
     // INTRO → MAIN MENU
+    // =========================================================
+
     private void LoadMainMenu()
     {
         Debug.Log("Loading Main Menu...");
@@ -87,7 +102,11 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(mainMenuSceneName);
     }
 
+
+    // =========================================================
     // PLAY → CONTROL PANEL
+    // =========================================================
+
     public void PlayGame()
     {
         Debug.Log("PLAY BUTTON PRESSED");
@@ -100,7 +119,23 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(controlPanelSceneName);
     }
 
-    // CONTROL PANEL → GAME
+
+    // =========================================================
+    // CONTROL PANEL → STORY
+    // =========================================================
+
+    private void LoadStoryScene()
+    {
+        Debug.Log("Loading Story Scene...");
+
+        SceneManager.LoadScene(storySceneName);
+    }
+
+
+    // =========================================================
+    // STORY → GAME
+    // =========================================================
+
     private void LoadGame()
     {
         Debug.Log("Loading SEEK-MAIN...");
@@ -108,7 +143,11 @@ public class MainMenuManager : MonoBehaviour
         SceneManager.LoadScene(gameSceneName);
     }
 
+
+    // =========================================================
     // CREDITS
+    // =========================================================
+
     public void OpenCredits()
     {
         GameObject credits = GameObject.Find("Credits Panel");
@@ -127,13 +166,10 @@ public class MainMenuManager : MonoBehaviour
             credits.SetActive(false);
     }
 
-    // QUIT
-    public void QuitGame()
-    {
-        Application.Quit();
 
-#if UNITY_EDITOR
-        UnityEditor.EditorApplication.isPlaying = false;
-#endif
-    }
+    // =========================================================
+    // QUIT
+    // =========================================================
+
+    //
 }

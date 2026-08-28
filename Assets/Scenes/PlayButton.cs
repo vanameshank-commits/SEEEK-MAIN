@@ -15,4 +15,20 @@ public class PlayButton : MonoBehaviour
             Debug.LogError("MainMenuManager not found!");
         }
     }
+
+
+    // =========================================================
+    // QUIT GAME
+    // =========================================================
+
+    public void Quit()
+    {
+        Debug.Log("QUIT BUTTON PRESSED");
+
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }
